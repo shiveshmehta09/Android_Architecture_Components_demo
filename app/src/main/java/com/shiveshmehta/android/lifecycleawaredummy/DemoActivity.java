@@ -1,9 +1,14 @@
 package com.shiveshmehta.android.lifecycleawaredummy;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class DemoActivity extends AppCompatActivity {
@@ -16,27 +21,40 @@ public class DemoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo);
 
-        Log.i(TAG,"Lifecycle Owner OnCreate");
+        Log.i(TAG, "Lifecycle Owner OnCreate");
 
         getLifecycle().addObserver(new DemoActivityObserver());
 
-        TextView textView = findViewById(R.id.textViewRandomNumber);
+        final TextView textView = findViewById(R.id.textViewRandomNumber);
+        Button buttonFetch = findViewById(R.id.buttonFetch);
 //        DemoActivityViewModel myNumber = new DemoActivityViewModel();
-        DemoActivityViewModel mViewModel = ViewModelProviders.of(this).get(DemoActivityViewModel.class);
-        String myRandomNumber = mViewModel.getNumber();
-        textView.setText(myRandomNumber);
+        final DemoActivityViewModel mViewModel = ViewModelProviders.of(this).get(DemoActivityViewModel.class);
+        LiveData<String> myRandomNumber = mViewModel.getNumber();
 
-        Log.i(TAG,"my Random Number set");
+        myRandomNumber.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                textView.setText(s);
+                Log.i(TAG, "my Random Number set");
+
+            }
+        });
+
+        buttonFetch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.createNumber();
+            }
+        });
 
     }
-
 
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        Log.i(TAG,"Lifecycle Owner onStart");
+        Log.i(TAG, "Lifecycle Owner onStart");
 
     }
 
@@ -44,7 +62,7 @@ public class DemoActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        Log.i(TAG,"Lifecycle Owner onPause");
+        Log.i(TAG, "Lifecycle Owner onPause");
 
     }
 
@@ -52,7 +70,7 @@ public class DemoActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        Log.i(TAG,"Lifecycle Owner onResume");
+        Log.i(TAG, "Lifecycle Owner onResume");
 
     }
 
@@ -60,7 +78,7 @@ public class DemoActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.i(TAG,"Lifecycle Owner onDestroy");
+        Log.i(TAG, "Lifecycle Owner onDestroy");
 
     }
 
@@ -68,7 +86,7 @@ public class DemoActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        Log.i(TAG,"Lifecycle Owner onStop");
+        Log.i(TAG, "Lifecycle Owner onStop");
 
     }
 
